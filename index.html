@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0EA5E9" />
+  <title>Sported Me | ادعمني — الصدق والأمانة في التعامل أهم من المال</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Cairo', 'sans-serif'] },
+          colors: {
+            skyMain: '#0EA5E9',
+            skyDark: '#0284C7',
+            walletGold: '#B45309',
+            walletGoldLight: '#D97706',
+            pointsPurple: '#7C3AED',
+            achieveGreen: '#16A34A',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #F8FAFC; color: #0F172A; }
+    .tab-active { background-color: #0EA5E9; color: #FFFFFF; font-weight: 700; }
+    .glass-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1rem; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ==================== 1. شريط القيمة الأساسية الثابت ==================== -->
+  <div class="bg-gradient-to-l from-skyDark to-skyMain text-white py-3 px-4 text-center shadow-sm">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2.5">
+      <i class="fa-solid fa-shield-halved text-lg"></i>
+      <span class="font-extrabold text-sm sm:text-base tracking-wide">
+        الصدق والأمانة في التعامل أهم من المال
+      </span>
+    </div>
+  </div>
+
+  <!-- ==================== 2. شريط الرسالة الشاملة (Global Broadcast) ==================== -->
+  <div id="global-broadcast-bar" class="bg-amber-50 border-b border-amber-300 text-amber-950 px-4 py-2.5 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 text-xs sm:text-sm font-bold">
+        <span class="bg-walletGold text-white px-2 py-0.5 rounded-md text-xs shrink-0">
+          <i class="fa-solid fa-bullhorn ml-1"></i> تعميم إداري
+        </span>
+        <p id="global-broadcast-text">
+          أهلاً بكم في منصة Sported Me | ادعمني — يرجى التأكد من ربط حساباتكم الاجتماعية بدقة قبل تنفيذ المهام لضمان اعتماد المكافآت فوراً.
+        </p>
+      </div>
+      <button id="edit-broadcast-btn" onclick="openBroadcastModal()" class="hidden shrink-0 bg-walletGold hover:bg-amber-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+        <i class="fa-solid fa-pen-to-square ml-1"></i> تعديل الرسالة
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 3. الشريط العلوي والتنقل ==================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-skyMain to-skyDark text-white flex items-center justify-center text-xl shadow">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+        <div>
+          <h1 class="font-black text-lg sm:text-xl text-slate-900 leading-tight">Sported Me <span class="text-skyMain">| ادعمني</span></h1>
+          <span class="text-[11px] font-bold text-achieveGreen flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-achieveGreen animate-pulse"></span> متصل • نظام آمن وموثوق
+          </span>
+        </div>
+      </div>
+
+      <!-- محول الأدوار الفوري للتجربة والإدارة -->
+      <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+        <span class="text-xs font-bold text-slate-600 px-2"><i class="fa-solid fa-user-shield ml-1 text-skyMain"></i> الدور:</span>
+        <select id="role-switcher" onchange="switchRole(this.value)" class="bg-white text-xs sm:text-sm font-bold text-slate-800 rounded-lg px-3 py-1.5 border border-slate-300 focus:outline-none">
+          <option value="employee">موظف (Employee)</option>
+          <option value="admin">مسؤول (Admin)</option>
+          <option value="super_admin">المدير العام (Super Admin)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- قائمة الأقسام -->
+    <nav class="max-w-7xl mx-auto px-4 pb-3 flex items-center gap-2 overflow-x-auto">
+      <button onclick="switchSection('tasks')" id="nav-tasks" class="nav-btn tab-active px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-list-check ml-1.5"></i> لوحة المهام
+      </button>
+      <button onclick="switchSection('wallet')" id="nav-wallet" class="nav-btn bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-wallet ml-1.5 text-walletGold"></i> المحفظة المالية
+      </button>
+      <button onclick="switchSection('accounts')" id="nav-accounts" class="nav-btn bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-share-nodes ml-1.5 text-skyMain"></i> حساباتي الاجتماعية
+      </button>
+      <button onclick="switchSection('tickets')" id="nav-tickets" class="nav-btn bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-headset ml-1.5 text-pointsPurple"></i> الشكاوى والدعم
+      </button>
+      <button onclick="switchSection('admin')" id="nav-admin" class="nav-btn hidden bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-chart-pie ml-1.5 text-achieveGreen"></i> الإدارة والتقارير
+      </button>
+    </nav>
+  </header>
+
+  <!-- ==================== 4. المحتوى الرئيسي ==================== -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1 space-y-6">
+
+    <!-- بطاقات الملخص السريع (المحفظة الذهبية + النقاط البنفسجية + الإنجازات الخضراء) -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="rounded-2xl bg-gradient-to-br from-walletGold to-walletGoldLight text-white p-5 shadow">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-amber-100">الرصيد الحالي (شام كاش)</span>
+          <i class="fa-solid fa-coins text-xl text-amber-200"></i>
+        </div>
+        <div id="stat-balance" class="text-2xl sm:text-3xl font-black">14,500 ل.س</div>
+        <div class="text-[11px] text-amber-100 mt-1">إجمالي المدفوع: <span id="stat-paid">45,000 ل.س</span></div>
+      </div>
+
+      <div class="rounded-2xl bg-pointsPurple text-white p-5 shadow">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-purple-100">النقاط المكتسبة</span>
+          <i class="fa-solid fa-gem text-xl text-purple-200"></i>
+        </div>
+        <div id="stat-points" class="text-2xl sm:text-3xl font-black">29 نقطة</div>
+        <div class="text-[11px] text-purple-100 mt-1">سعر الصرف: 1 نقطة = <span id="stat-rate">500</span> ل.س</div>
+      </div>
+
+      <div class="rounded-2xl bg-achieveGreen text-white p-5 shadow">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-emerald-100">المهام المنجزة</span>
+          <i class="fa-solid fa-circle-check text-xl text-emerald-200"></i>
+        </div>
+        <div id="stat-completed" class="text-2xl sm:text-3xl font-black">12 مهمة</div>
+        <div class="text-[11px] text-emerald-100 mt-1">تقييم الأداء: ⭐⭐⭐⭐⭐ (5/5)</div>
+      </div>
+    </section>
+
+    <!-- ==================== القسم 1: لوحة المهام والمنصات الأربع ==================== -->
+    <section id="section-tasks" class="space-y-5">
+      <!-- أزرار المنصات المستقلة -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button onclick="filterPlatform('facebook')" id="plat-facebook" class="plat-btn glass-card p-3.5 flex items-center justify-center gap-2.5 font-bold border-2 border-blue-600 bg-blue-50 text-blue-700">
+          <i class="fa-brands fa-facebook text-xl text-blue-600"></i> Facebook
+        </button>
+        <button onclick="filterPlatform('instagram')" id="plat-instagram" class="plat-btn glass-card p-3.5 flex items-center justify-center gap-2.5 font-bold text-slate-700">
+          <i class="fa-brands fa-instagram text-xl text-pink-600"></i> Instagram
+        </button>
+        <button onclick="filterPlatform('x')" id="plat-x" class="plat-btn glass-card p-3.5 flex items-center justify-center gap-2.5 font-bold text-slate-700">
+          <i class="fa-brands fa-x-twitter text-xl text-slate-900"></i> X (Twitter)
+        </button>
+        <button onclick="filterPlatform('youtube')" id="plat-youtube" class="plat-btn glass-card p-3.5 flex items-center justify-center gap-2.5 font-bold text-slate-700">
+          <i class="fa-brands fa-youtube text-xl text-red-600"></i> YouTube
+        </button>
+      </div>
+
+      <!-- زر إضافة مهمة (يظهر للمسؤول والمدير العام فقط) -->
+      <div id="admin-add-task-box" class="hidden glass-card p-4 flex flex-wrap items-center justify-between gap-3 bg-sky-50/70 border-sky-200">
+        <div class="text-sm font-bold text-sky-950">
+          <i class="fa-solid fa-plus-circle text-skyMain ml-1"></i> لوحة إضافة المهام السريعة
+        </div>
+        <button onclick="openNewTaskModal()" class="bg-skyMain hover:bg-skyDark text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-sm transition">
+          + نشر مهمة جديدة
+        </button>
+      </div>
+
+      <!-- قائمة المهام -->
+      <div id="tasks-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ==================== القسم 2: المحفظة المالية الذهبية (شام كاش) ==================== -->
+    <section id="section-wallet" class="hidden space-y-5">
+      <div class="glass-card p-6 border-amber-300 bg-gradient-to-l from-amber-50/60 to-white">
+        <h2 class="text-lg font-black text-walletGold mb-4"><i class="fa-solid fa-vault ml-2"></i> تفاصيل المحفظة المالية وسحب الأرباح (شام كاش)</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div class="p-3 bg-white rounded-xl border border-amber-200">
+            <div class="text-xs text-slate-500">الرصيد الحالي</div>
+            <div id="w-current" class="font-black text-lg text-walletGold">14,500 ل.س</div>
+          </div>
+          <div class="p-3 bg-white rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500">إجمالي المدفوع</div>
+            <div id="w-paid" class="font-black text-lg text-achieveGreen">45,000 ل.س</div>
+          </div>
+          <div class="p-3 bg-white rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500">أرباح الشهر الحالي</div>
+            <div id="w-month" class="font-black text-lg text-slate-800">19,500 ل.س</div>
+          </div>
+          <div class="p-3 bg-white rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500">أرباح السنة</div>
+            <div id="w-year" class="font-black text-lg text-slate-800">59,500 ل.س</div>
+          </div>
+        </div>
+
+        <form onsubmit="requestWithdrawal(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input type="text" id="sham-account" value="SHAM-963-884120" required placeholder="رابط أو رقم محفظة شام كاش" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <input type="number" id="withdraw-amount" min="1000" required placeholder="المبلغ المطلوب سحبه (ل.س)" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <button type="submit" class="bg-walletGold hover:bg-amber-800 text-white font-bold rounded-xl py-2.5 px-4 text-sm transition">
+            <i class="fa-solid fa-paper-plane ml-1"></i> طلب سحب إلى شام كاش
+          </button>
+        </form>
+      </div>
+
+      <div class="glass-card p-5">
+        <h3 class="font-bold text-slate-800 mb-3">سجل المدفوعات وطلبات السحب</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-sm">
+            <thead class="bg-slate-50 text-slate-600 border-b">
+              <tr>
+                <th class="p-3">الرقم المرجعي</th>
+                <th class="p-3">الموظف</th>
+                <th class="p-3">محفظة شام كاش</th>
+                <th class="p-3">المبلغ</th>
+                <th class="p-3">الحالة / الإجراء</th>
+              </tr>
+            </thead>
+            <tbody id="payouts-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== القسم 3: الحسابات الاجتماعية (حتى 5 لكل منصة) ==================== -->
+    <section id="section-accounts" class="hidden space-y-5">
+      <div class="glass-card p-6">
+        <h2 class="text-lg font-black text-slate-800 mb-1">إدارة الحسابات الاجتماعية</h2>
+        <p class="text-xs text-slate-500 mb-4">يُسمح بإضافة حتى 5 حسابات كحد أقصى لكل منصة (Facebook, Instagram, X, YouTube).</p>
+        <form onsubmit="addSocialAccount(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+          <select id="acc-platform" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-bold">
+            <option value="facebook">Facebook</option>
+            <option value="instagram">Instagram</option>
+            <option value="x">X (Twitter)</option>
+            <option value="youtube">YouTube</option>
+          </select>
+          <input type="text" id="acc-name" required placeholder="اسم الحساب" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <input type="url" id="acc-url" required placeholder="رابط الحساب https://..." class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <input type="text" id="acc-contact" required placeholder="البريد أو الهاتف المرتبط" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <button type="submit" class="bg-skyMain hover:bg-skyDark text-white font-bold rounded-xl py-2.5 px-4 text-sm">
+            + إضافة الحساب
+          </button>
+        </form>
+      </div>
+      <div id="accounts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ==================== القسم 4: مركز الشكاوى والدعم (Tickets) ==================== -->
+    <section id="section-tickets" class="hidden space-y-5">
+      <div class="glass-card p-6">
+        <h2 class="text-lg font-black text-slate-800 mb-4">فتح تذكرة دعم أو شكوى أو طلب مراجعة</h2>
+        <form onsubmit="createTicket(event)" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select id="ticket-type" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold">
+              <option value="شكوى">شكوى</option>
+              <option value="اقتراح">اقتراح تطويري</option>
+              <option value="طلب مراجعة">طلب مراجعة مهمة / رصيد</option>
+            </select>
+            <input type="text" id="ticket-subject" required placeholder="عنوان التذكرة" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          </div>
+          <textarea id="ticket-message" rows="3" required placeholder="اكتب تفاصيل رسالتك هنا بكل وضوح وأمانة..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"></textarea>
+          <button type="submit" class="bg-pointsPurple hover:bg-purple-800 text-white font-bold px-6 py-2.5 rounded-xl text-sm">
+            إرسال التذكرة للإدارة
+          </button>
+        </form>
+      </div>
+      <div id="tickets-list" class="space-y-3"></div>
+    </section>
+
+    <!-- ==================== القسم 5: لوحة الإدارة والتقارير وسجل النشاط ==================== -->
+    <section id="section-admin" class="hidden space-y-5">
+      <!-- إعدادات المدير العام الحصرية -->
+      <div id="super-admin-settings" class="hidden glass-card p-6 border-purple-300 bg-purple-50/40 space-y-4">
+        <h2 class="text-lg font-black text-pointsPurple"><i class="fa-solid fa-crown ml-1"></i> صلاحيات المدير العام الحصرية (Super Admin)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <label class="block text-xs font-bold text-slate-600 mb-2">التحكم بقيمة النقطة الواحدة (بالليرة السورية)</label>
+            <div class="flex gap-2">
+              <input type="number" id="point-rate-input" value="500" min="1" class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold" />
+              <button onclick="updatePointRate()" class="bg-pointsPurple text-white font-bold px-4 py-2 rounded-xl text-sm">تحديث</button>
+            </div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate-600 mb-2">إرسال رسالة شاملة تظهر لجميع المستخدمين</span>
+            <button onclick="openBroadcastModal()" class="bg-walletGold text-white font-bold px-4 py-2 rounded-xl text-sm">
+              <i class="fa-solid fa-bullhorn ml-1"></i> كتابة / تعديل الرسالة الشاملة
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- إحصائيات الموظفين والأرباح -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card p-4 text-center">
+          <div class="text-xs text-slate-500">إجمالي الموظفين</div>
+          <div class="text-2xl font-black text-slate-800 mt-1">148</div>
+        </div>
+        <div class="glass-card p-4 text-center">
+          <div class="text-xs text-slate-500">الموظفون النشطون</div>
+          <div class="text-2xl font-black text-achieveGreen mt-1">139</div>
+        </div>
+        <div class="glass-card p-4 text-center">
+          <div class="text-xs text-slate-500">المجمدون / الموقوفون</div>
+          <div class="text-2xl font-black text-red-600 mt-1">9</div>
+        </div>
+        <div class="glass-card p-4 text-center">
+          <div class="text-xs text-slate-500">الأرباح المدفوعة</div>
+          <div id="admin-total-paid" class="text-2xl font-black text-walletGold mt-1">45,000 ل.س</div>
+        </div>
+      </div>
+
+      <!-- سجل النشاط والرقابة (Audit Log) -->
+      <div class="glass-card p-5">
+        <h3 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-clock-rotate-left ml-1 text-skyMain"></i> سجل النشاط والرقابة الأمنية (Audit Log)</h3>
+        <ul id="audit-log-list" class="space-y-2 text-xs text-slate-600"></ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== نافذة الرسالة الشاملة (Modal) ==================== -->
+  <div id="broadcast-modal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+      <h3 class="text-lg font-black text-slate-900"><i class="fa-solid fa-bullhorn text-walletGold ml-1"></i> كتابة رسالة شاملة يراها الجميع</h3>
+      <label class="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer">
+        <input type="checkbox" id="broadcast-active-check" checked class="w-4 h-4 accent-skyMain" />
+        تفعيل ظهور الرسالة في أعلى المنصة لجميع المستخدمين
+      </label>
+      <textarea id="broadcast-input" rows="3" class="w-full p-3 rounded-xl border border-slate-300 text-sm" placeholder="اكتب رسالتك الشاملة هنا..."></textarea>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeBroadcastModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm">إلغاء</button>
+        <button onclick="saveBroadcast()" class="px-5 py-2 rounded-xl bg-skyMain text-white font-bold text-sm">نشر الرسالة للجميع</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== نافذة إضافة مهمة جديدة (Modal) ==================== -->
+  <div id="task-modal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+      <h3 class="text-lg font-black text-slate-900">إضافة مهمة رقمية جديدة</h3>
+      <select id="new-task-platform" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm font-bold">
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+        <option value="x">X (Twitter)</option>
+        <option value="youtube">YouTube</option>
+      </select>
+      <input type="text" id="new-task-title" placeholder="عنوان المهمة" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm" />
+      <input type="url" id="new-task-url" placeholder="رابط المهمة https://..." class="w-full p-2.5 rounded-xl border border-slate-300 text-sm" />
+      <input type="text" id="new-task-reqs" value="إعجاب, تعليق, مشاركة" placeholder="الشروط مفصولة بفاصلة" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm" />
+      <input type="number" id="new-task-points" value="3" min="1" placeholder="عدد النقاط" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm" />
+      <div class="flex justify-end gap-2">
+        <button onclick="closeNewTaskModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm">إلغاء</button>
+        <button onclick="createNewTask()" class="px-5 py-2 rounded-xl bg-skyMain text-white font-bold text-sm">نشر المهمة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. المنطق البرمجي التفاعلي الكامل ==================== -->
+  <script>
+    const state = {
+      role: 'employee',
+      currentPlatform: 'facebook',
+      pointRate: 500,
+      balance: 14500,
+      paid: 45000,
+      monthEarned: 19500,
+      yearEarned: 59500,
+      points: 29,
+      completedCount: 12,
+      tasks: [
+        { id: 1, platform: 'facebook', title: 'دعم منشور الحملة التسويقية الرسمية', url: 'https://facebook.com/example/post/1', reqs: ['إعجاب', 'تعليق', 'مشاركة'], points: 3, done: false },
+        { id: 2, platform: 'instagram', title: 'تفاعل مع ريلز التعريف بالمنصة', url: 'https://instagram.com/p/example2', reqs: ['إعجاب', 'تعليق'], points: 2, done: false },
+        { id: 3, platform: 'x', title: 'إعادة تغريد الإعلان الأسبوعي للمنصة', url: 'https://x.com/example/status/3', reqs: ['إعجاب', 'إعادة نشر'], points: 2, done: false },
+        { id: 4, platform: 'youtube', title: 'مشاهدة وإعجاب بالفيديو التعريفي الكامل', url: 'https://youtube.com/watch?v=example4', reqs: ['إعجاب', 'اشتراك', 'تعليق'], points: 5, done: false },
+      ],
+      accounts: [
+        { platform: 'facebook', name: 'أحمد المحمد - حساب أساسي', url: 'https://facebook.com/ahmad.sy', contact: '+963944123456', date: '2026-11-10' }
+      ],
+      payouts: [
+        { ref: 'PAY-2026-84120', user: 'أحمد المحمد', shamCash: 'SHAM-963-884120', amount: 25000, status: 'completed' },
+        { ref: 'PAY-2026-99104', user: 'أحمد المحمد', shamCash: 'SHAM-963-884120', amount: 10000, status: 'pending' }
+      ],
+      tickets: [
+        { id: 501, type: 'اقتراح', subject: 'إضافة تنبيهات صوتية للمهام الجديدة', message: 'نقترح تفعيل صوت تنبيه عند نزول مهام يوتيوب عالية النقاط.', status: 'مفتوحة' }
+      ],
+      logs: [
+        'تسجيل دخول الموظف أحمد المحمد (+963944123456) من محافظة حلب.',
+        'اعتماد دفعة مالية رقم PAY-2026-84120 بقيمة 25,000 ل.س عبر شام كاش.'
+      ]
+    };
+
+    function addLog(text) {
+      const time = new Date().toLocaleTimeString('ar-SY');
+      state.logs.unshift(`[${time}] ${text}`);
+      renderLogs();
+    }
+
+    function switchRole(newRole) {
+      state.role = newRole;
+      const isSuper = newRole === 'super_admin';
+      const isAdminOrSuper = newRole === 'admin' || isSuper;
+
+      document.getElementById('edit-broadcast-btn').classList.toggle('hidden', !isSuper);
+      document.getElementById('super-admin-settings').classList.toggle('hidden', !isSuper);
+      document.getElementById('admin-add-task-box').classList.toggle('hidden', !isAdminOrSuper);
+      document.getElementById('nav-admin').classList.toggle('hidden', !isAdminOrSuper);
+
+      if (!isAdminOrSuper && !document.getElementById('section-admin').classList.contains('hidden')) {
+        switchSection('tasks');
+      }
+      renderAll();
+      addLog(`تم التبديل إلى وضع الصلاحيات: ${newRole}`);
+    }
+
+    function switchSection(sec) {
+      ['tasks', 'wallet', 'accounts', 'tickets', 'admin'].forEach(id => {
+        document.getElementById(`section-${id}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${id}`);
+        if (btn) {
+          btn.classList.remove('tab-active');
+          btn.classList.add('bg-slate-100', 'text-slate-700');
+        }
+      });
+      document.getElementById(`section-${sec}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${sec}`);
+      if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+      }
+    }
+
+    function filterPlatform(plat) {
+      state.currentPlatform = plat;
+      document.querySelectorAll('.plat-btn').forEach(btn => {
+        btn.classList.remove('border-2', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
+        btn.classList.add('text-slate-700');
+      });
+      const active = document.getElementById(`plat-${plat}`);
+      active.classList.add('border-2', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
+      renderTasks();
+    }
+
+    function completeTask(id) {
+      const task = state.tasks.find(t => t.id === id);
+      if (!task || task.done) return;
+      task.done = true;
+      const earned = task.points * state.pointRate;
+      state.points += task.points;
+      state.balance += earned;
+      state.monthEarned += earned;
+      state.yearEarned += earned;
+      state.completedCount += 1;
+      addLog(`إنجاز مهمة "${task.title}" واحتساب ${task.points} نقاط (${earned.toLocaleString()} ل.س).`);
+      renderAll();
+    }
+
+    function archiveTask(id) {
+      const idx = state.tasks.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        const title = state.tasks[idx].title;
+        state.tasks.splice(idx, 1);
+        addLog(`أرشفة وحذف المهمة "${title}" مع بقاء أرباح ونقاط الموظفين السابقين محفوظة بالكامل.`);
+        renderTasks();
+      }
+    }
+
+    function requestWithdrawal(e) {
+      e.preventDefault();
+      const amount = Number(document.getElementById('withdraw-amount').value);
+      const shamCash = document.getElementById('sham-account').value.trim();
+      if (amount <= 0 || amount > state.balance) {
+        alert('المبلغ المطلوب غير صالح أو يتجاوز رصيدك الحالي.');
+        return;
+      }
+      const ref = 'PAY-2026-' + Math.floor(10000 + Math.random() * 90000);
+      state.payouts.unshift({ ref, user: 'أحمد المحمد', shamCash, amount, status: 'pending' });
+      document.getElementById('withdraw-amount').value = '';
+      addLog(`طلب سحب جديد رقم ${ref} بقيمة ${amount.toLocaleString()} ل.س إلى محفظة ${shamCash}.`);
+      renderPayouts();
+    }
+
+    function approvePayout(ref) {
+      const p = state.payouts.find(item => item.ref === ref);
+      if (!p || p.status !== 'pending') return;
+      if (state.balance < p.amount) {
+        alert('الرصيد الحالي غير كافٍ لاعتماد هذه الدفعة.');
+        return;
+      }
+      state.balance -= p.amount;
+      state.paid += p.amount;
+      p.status = 'completed';
+      addLog(`اعتماد المدير العام للدفعة المالية ${ref} بقيمة ${p.amount.toLocaleString()} ل.س.`);
+      renderAll();
+    }
+
+    function addSocialAccount(e) {
+      e.preventDefault();
+      const platform = document.getElementById('acc-platform').value;
+      const count = state.accounts.filter(a => a.platform === platform).length;
+      if (count >= 5) {
+        alert('عذراً، الحد الأقصى المسموح به هو 5 حسابات فقط لكل منصة.');
+        return;
+      }
+      const name = document.getElementById('acc-name').value.trim();
+      const url = document.getElementById('acc-url').value.trim();
+      const contact = document.getElementById('acc-contact').value.trim();
+      state.accounts.push({ platform, name, url, contact, date: new Date().toISOString().slice(0, 10) });
+      e.target.reset();
+      addLog(`إضافة حساب اجتماعي جديد (${platform}): ${name}`);
+      renderAccounts();
+    }
+
+    function createTicket(e) {
+      e.preventDefault();
+      const type = document.getElementById('ticket-type').value;
+      const subject = document.getElementById('ticket-subject').value.trim();
+      const message = document.getElementById('ticket-message').value.trim();
+      state.tickets.unshift({ id: 500 + state.tickets.length + 1, type, subject, message, status: 'مفتوحة' });
+      e.target.reset();
+      addLog(`فتح تذكرة دعم جديدة (${type}): ${subject}`);
+      renderTickets();
+    }
+
+    function updatePointRate() {
+      const val = Number(document.getElementById('point-rate-input').value);
+      if (val > 0) {
+        state.pointRate = val;
+        addLog(`تعديل قيمة النقطة الواحدة إلى ${val} ليرة سورية.`);
+        renderAll();
+      }
+    }
+
+    function openBroadcastModal() {
+      document.getElementById('broadcast-input').value = document.getElementById('global-broadcast-text').innerText.trim();
+      document.getElementById('broadcast-modal').classList.remove('hidden');
+      document.getElementById('broadcast-modal').classList.add('flex');
+    }
+    function closeBroadcastModal() {
+      document.getElementById('broadcast-modal').classList.add('hidden');
+      document.getElementById('broadcast-modal').classList.remove('flex');
+    }
+    function saveBroadcast() {
+      const active = document.getElementById('broadcast-active-check').checked;
+      const msg = document.getElementById('broadcast-input').value.trim();
+      const bar = document.getElementById('global-broadcast-bar');
+      if (active && msg) {
+        document.getElementById('global-broadcast-text').innerText = msg;
+        bar.classList.remove('hidden');
+      } else {
+        bar.classList.add('hidden');
+      }
+      addLog('تحديث الرسالة الشاملة الموجهة لجميع المستخدمين.');
+      closeBroadcastModal();
+    }
+
+    function openNewTaskModal() {
+      document.getElementById('new-task-platform').value = state.currentPlatform;
+      document.getElementById('task-modal').classList.remove('hidden');
+      document.getElementById('task-modal').classList.add('flex');
+    }
+    function closeNewTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+      document.getElementById('task-modal').classList.remove('flex');
+    }
+    function createNewTask() {
+      const platform = document.getElementById('new-task-platform').value;
+      const title = document.getElementById('new-task-title').value.trim();
+      const url = document.getElementById('new-task-url').value.trim();
+      const reqs = document.getElementById('new-task-reqs').value.split(',').map(s => s.trim()).filter(Boolean);
+      const points = Number(document.getElementById('new-task-points').value) || 3;
+      if (!title || !url) return;
+      state.tasks.unshift({ id: Date.now(), platform, title, url, reqs, points, done: false });
+      addLog(`إضافة مهمة جديدة على ${platform}: ${title} (${points} نقاط)`);
+      closeNewTaskModal();
+      filterPlatform(platform);
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-container');
+      const canManage = state.role === 'admin' || state.role === 'super_admin';
+      const filtered = state.tasks.filter(t => t.platform === state.currentPlatform);
+
+      container.innerHTML = filtered.map(t => {
+        const reward = t.points * state.pointRate;
+        return `
+          <div class="glass-card p-5 flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <h3 class="font-bold text-slate-900 text-base">${t.title}</h3>
+                <span class="shrink-0 bg-purple-100 text-pointsPurple text-xs font-extrabold px-2.5 py-1 rounded-full">
+                  ${t.points} نقاط • ${reward.toLocaleString()} ل.س
+                </span>
+              </div>
+              <a href="${t.url}" target="_blank" class="text-xs text-skyDark underline break-all">${t.url}</a>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                ${t.reqs.map(r => `<span class="bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg">✅ ${r}</span>`).join('')}
+              </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <button onclick="completeTask(${t.id})" ${t.done ? 'disabled' : ''}
+                class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm text-white transition ${t.done ? 'bg-achieveGreen cursor-default' : 'bg-skyMain hover:bg-skyDark'}">
+                ${t.done ? '<i class="fa-solid fa-check-circle ml-1"></i> تم الإنجاز بنجاح' : '<i class="fa-solid fa-arrow-up-right-from-square ml-1"></i> تنفيذ المهمة واستلام المكافأة'}
+              </button>
+              ${canManage ? `<button onclick="archiveTask(${t.id})" title="حذف وأرشفة المهمة" class="p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="col-span-2 text-center py-10 text-slate-400 font-bold">لا توجد مهام نشطة حالياً على هذه المنصة.</div>';
+    }
+
+    function renderPayouts() {
+      const tbody = document.getElementById('payouts-table-body');
+      const isSuper = state.role === 'super_admin';
+      tbody.innerHTML = state.payouts.map(p => `
+        <tr>
+          <td class="p-3 font-mono font-bold text-xs">${p.ref}</td>
+          <td class="p-3 font-semibold">${p.user}</td>
+          <td class="p-3 text-xs text-slate-600">${p.shamCash}</td>
+          <td class="p-3 font-black text-walletGold">${p.amount.toLocaleString()} ل.س</td>
+          <td class="p-3">
+            ${p.status === 'completed'
+              ? '<span class="bg-emerald-100 text-achieveGreen text-xs font-bold px-2.5 py-1 rounded-full">مدفوع ومعتمد</span>'
+              : (isSuper
+                  ? `<button onclick="approvePayout('${p.ref}')" class="bg-achieveGreen hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1 rounded-lg">اعتماد الدفع</button>`
+                  : '<span class="bg-amber-100 text-walletGold text-xs font-bold px-2.5 py-1 rounded-full">قيد المراجعة</span>')}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAccounts() {
+      document.getElementById('accounts-list').innerHTML = state.accounts.map(a => `
+        <div class="glass-card p-4 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-extrabold uppercase text-skyMain">${a.platform}</span>
+            <h4 class="font-bold text-slate-800">${a.name}</h4>
+            <p class="text-xs text-slate-500">${a.url} • ${a.contact}</p>
+          </div>
+          <span class="text-[11px] text-slate-400">${a.date}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderTickets() {
+      document.getElementById('tickets-list').innerHTML = state.tickets.map(t => `
+        <div class="glass-card p-4 flex items-start justify-between gap-3">
+          <div>
+            <span class="text-xs font-bold text-pointsPurple">#${t.id} • ${t.type}</span>
+            <h4 class="font-bold text-slate-800">${t.subject}</h4>
+            <p class="text-xs text-slate-600 mt-1">${t.message}</p>
+          </div>
+          <span class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">${t.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderLogs() {
+      document.getElementById('audit-log-list').innerHTML = state.logs.map(l => `
+        <li class="p-2 bg-slate-50 rounded-lg border border-slate-100">${l}</li>
+      `).join('');
+    }
+
+    function renderAll() {
+      document.getElementById('stat-balance').innerText = `${state.balance.toLocaleString()} ل.س`;
+      document.getElementById('stat-paid').innerText = `${state.paid.toLocaleString()} ل.س`;
+      document.getElementById('stat-points').innerText = `${state.points} نقطة`;
+      document.getElementById('stat-rate').innerText = state.pointRate;
+      document.getElementById('stat-completed').innerText = `${state.completedCount} مهمة`;
+
+      document.getElementById('w-current').innerText = `${state.balance.toLocaleString()} ل.س`;
+      document.getElementById('w-paid').innerText = `${state.paid.toLocaleString()} ل.س`;
+      document.getElementById('w-month').innerText = `${state.monthEarned.toLocaleString()} ل.س`;
+      document.getElementById('w-year').innerText = `${state.yearEarned.toLocaleString()} ل.س`;
+      document.getElementById('admin-total-paid').innerText = `${state.paid.toLocaleString()} ل.س`;
+
+      renderTasks();
+      renderPayouts();
+      renderAccounts();
+      renderTickets();
+      renderLogs();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
