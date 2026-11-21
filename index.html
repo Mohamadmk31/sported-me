@@ -73,14 +73,12 @@
         <button id="btn-tab-register" onclick="toggleAuthMode('register')" class="py-2 rounded-lg text-xs font-bold text-slate-600">إنشاء حساب جديد</button>
       </div>
 
-      <!-- نموذج الدخول -->
       <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3">
         <input type="email" id="login-email" required placeholder="البريد الإلكتروني" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
         <input type="password" id="login-password" required placeholder="كلمة المرور" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
-        <button type="submit" id="btn-login-submit" class="w-full bg-skyMain hover:bg-skyDark text-white font-bold py-3 rounded-xl text-sm shadow">دخول للمنصة</button>
+        <button type="submit" class="w-full bg-skyMain hover:bg-skyDark text-white font-bold py-3 rounded-xl text-sm shadow">دخول للمنصة</button>
       </form>
 
-      <!-- نموذج التسجيل -->
       <form id="register-form" onsubmit="handleRegister(event)" class="hidden space-y-3">
         <input type="text" id="reg-name" required placeholder="الاسم الكامل" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
         <input type="tel" id="reg-phone" required placeholder="رقم الهاتف السوري (+9639...)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
@@ -105,7 +103,7 @@
         <input type="text" id="reg-sham-account" required placeholder="رابط أو رقم محفظة شام كاش" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
         <input type="text" id="reg-sham-holder" required placeholder="اسم صاحب محفظة شام كاش" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
         <input type="password" id="reg-password" minlength="6" required placeholder="كلمة المرور (6 أحرف على الأقل)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
-        <button type="submit" id="btn-reg-submit" class="w-full bg-achieveGreen hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow">إنشاء الحساب وبدء العمل</button>
+        <button type="submit" class="w-full bg-achieveGreen hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow">إنشاء الحساب وبدء العمل</button>
       </form>
     </div>
   </div>
@@ -146,12 +144,12 @@
       <!-- بطاقات الملخص -->
       <section class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div class="rounded-2xl bg-gradient-to-br from-walletGold to-walletGoldLight text-white p-4 shadow">
-          <div class="text-xs text-amber-100 font-bold">الرصيد الحالي (شام كاش)</div>
+          <div class="text-xs text-amber-100 font-bold">الرصيد المعتمد (شام كاش)</div>
           <div id="stat-balance" class="text-2xl font-black mt-1">0 ل.س</div>
           <div class="text-[11px] text-amber-100 mt-1">إجمالي المدفوع: <span id="stat-paid">0 ل.س</span></div>
         </div>
         <div class="rounded-2xl bg-pointsPurple text-white p-4 shadow">
-          <div class="text-xs text-purple-100 font-bold">النقاط المكتسبة</div>
+          <div class="text-xs text-purple-100 font-bold">النقاط المعتمدة</div>
           <div id="stat-points" class="text-2xl font-black mt-1">0 نقطة</div>
           <div class="text-[11px] text-purple-100 mt-1">1 نقطة = <span id="stat-rate">500</span> ل.س</div>
         </div>
@@ -237,8 +235,8 @@
         <div id="tickets-list" class="space-y-2"></div>
       </section>
 
-      <!-- قسم الإدارة -->
-      <section id="section-admin" class="hidden space-y-4">
+      <!-- قسم الإدارة والتقارير -->
+      <section id="section-admin" class="hidden space-y-5">
         <div id="super-admin-settings" class="hidden glass-card p-5 border-purple-300 bg-purple-50/40 space-y-3">
           <h3 class="font-black text-pointsPurple text-sm">إعدادات المدير العام الحصرية (Super Admin)</h3>
           <div class="flex flex-wrap gap-2">
@@ -247,9 +245,20 @@
             <button onclick="openBroadcastModal()" class="bg-walletGold text-white font-bold px-4 py-2 rounded-xl text-xs">تعديل الرسالة الشاملة</button>
           </div>
         </div>
-        <div class="glass-card p-4">
-          <h3 class="font-bold text-sm mb-3">إدارة الموظفين والمستخدمين</h3>
-          <div id="admin-users-list" class="space-y-2 text-xs"></div>
+
+        <!-- 1. مراجعة المهام المنفذة واعتماد النقاط -->
+        <div class="glass-card p-4 border-sky-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-skyDark text-sm"><i class="fa-solid fa-clipboard-check ml-1"></i> مراجعة المهام المنفذة من الموظفين (المعلقة)</h3>
+            <span id="pending-count-badge" class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full">0 قيد المراجعة</span>
+          </div>
+          <div id="admin-pending-completions" class="space-y-2.5 text-xs"></div>
+        </div>
+
+        <!-- 2. لوحة الموظفين التفصيلية وروابط شام كاش -->
+        <div class="glass-card p-4 space-y-3">
+          <h3 class="font-black text-slate-900 text-sm"><i class="fa-solid fa-users-gear ml-1 text-walletGold"></i> سجل الموظفين، التقدم، والمستحقات المالية (شام كاش)</h3>
+          <div id="admin-users-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"></div>
         </div>
       </section>
     </main>
@@ -289,7 +298,6 @@
   </div>
 
   <script>
-    // الاتصال المباشر بمشروعك على Supabase
     const SUPABASE_URL = 'https://agrditbckkipfcgkhuiw.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Sc-4XT4Ulim5GFaZqYLSnw_0G-0SqIS';
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -298,7 +306,7 @@
     let currentPlatform = 'facebook';
     let pointRate = 500;
     let allTasks = [];
-    let completedTaskIds = [];
+    let myCompletionsMap = {};
     let myAccountsCountByPlatform = { facebook: 0, instagram: 0, x: 0, youtube: 0 };
     let openedTasksTimers = {};
 
@@ -360,8 +368,9 @@
       const { data: tasks } = await sb.from('tasks').select('*').eq('status', 'active').order('created_at', { ascending: false });
       allTasks = tasks || [];
 
-      const { data: comps } = await sb.from('completions').select('task_id').eq('user_id', currentProfile.id);
-      completedTaskIds = (comps || []).map(c => c.task_id);
+      const { data: comps } = await sb.from('completions').select('*').eq('user_id', currentProfile.id);
+      myCompletionsMap = {};
+      (comps || []).forEach(c => { myCompletionsMap[c.task_id] = c.status || 'approved'; });
       renderTasks();
 
       const { data: accs } = await sb.from('social_accounts').select('*').eq('user_id', currentProfile.id);
@@ -398,24 +407,139 @@
       `).join('');
 
       if (isAdmin) {
-        const { data: users } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+        const { data: users } = await sb.from('profiles').select('*').order('points', { ascending: false });
+        const { data: allComps } = await sb.from('completions').select('*').order('created_at', { ascending: false });
+
+        const usersMap = {};
+        const completedCountMap = {};
+        (users || []).forEach(u => { usersMap[u.id] = u; });
+        (allComps || []).forEach(c => {
+          if (c.status === 'approved') completedCountMap[c.user_id] = (completedCountMap[c.user_id] || 0) + 1;
+        });
+
+        const tasksMap = {};
+        allTasks.forEach(t => { tasksMap[t.id] = t; });
+
+        // عرض المهام المعلقة بانتظار المراجعة الإدارية
+        const pendingComps = (allComps || []).filter(c => c.status === 'pending');
+        document.getElementById('pending-count-badge').innerText = `${pendingComps.length} قيد المراجعة`;
+        document.getElementById('admin-pending-completions').innerHTML = pendingComps.map(c => {
+          const emp = usersMap[c.user_id] || { full_name: 'موظف' };
+          const tsk = tasksMap[c.task_id] || { title: 'مهمة رقم #' + c.task_id, url: '#' };
+          return `
+            <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl flex flex-col sm:flex-row justify-between gap-3">
+              <div class="space-y-1">
+                <div class="font-bold text-slate-900">الموظف: <span class="text-skyDark">${emp.full_name}</span> • المهمة: ${tsk.title}</div>
+                <div>الحساب المنفّذ: <b class="text-pointsPurple">${c.account_used || 'غير محدد'}</b> | إثبات التعليق: <b>${c.proof_note || '—'}</b></div>
+                <a href="${tsk.url}" target="_blank" class="text-skyDark underline inline-block"><i class="fa-solid fa-link ml-1"></i> فتح رابط المنشور للتحقق من التعليق والإعجاب</a>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="reviewCompletion(${c.id}, '${c.user_id}', ${c.points}, ${c.money_earned}, 'approved')" class="bg-achieveGreen text-white px-3 py-1.5 rounded-lg font-bold">اعتماد (+${c.points} نقاط)</button>
+                <button onclick="reviewCompletion(${c.id}, '${c.user_id}', ${c.points}, ${c.money_earned}, 'rejected')" class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg font-bold">رفض</button>
+              </div>
+            </div>
+          `;
+        }).join('') || '<p class="text-slate-400 text-center py-2">لا توجد مهام معلقة بانتظار المراجعة حالياً.</p>';
+
+        // عرض لوحة الموظفين التفصيلية وروابط شام كاش
         document.getElementById('admin-users-list').innerHTML = (users || []).map(u => `
-          <div class="p-3 bg-slate-50 rounded-xl flex flex-wrap justify-between items-center gap-2 border">
-            <div><b>${u.full_name}</b> (${u.governorate}) • ${u.phone} — الرصيد: <b>${Number(u.balance).toLocaleString()} ل.س</b></div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded bg-emerald-100 text-achieveGreen font-bold">${u.status}</span>
-              ${u.role !== 'super_admin' ? `<button onclick="toggleUserFreeze('${u.id}', '${u.status}')" class="px-2.5 py-1 rounded bg-red-100 text-red-700 font-bold">${u.status === 'active' ? 'تجميد' : 'تنشيط'}</button>` : ''}
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-between gap-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-black text-sm text-slate-900">${u.full_name} <span class="text-[11px] font-normal text-slate-500">(${u.governorate || 'سوريا'})</span></h4>
+                <div class="text-slate-600 mt-0.5"><i class="fa-solid fa-phone ml-1 text-skyMain"></i> ${u.phone || '—'}</div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full font-bold ${u.status === 'active' ? 'bg-emerald-100 text-achieveGreen' : 'bg-red-100 text-red-700'}">${u.status === 'active' ? 'نشط' : 'مجمد'}</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 bg-white p-2.5 rounded-xl border text-center">
+              <div>
+                <div class="text-[10px] text-slate-500">المهام المنجزة</div>
+                <div class="font-black text-skyDark">${completedCountMap[u.id] || 0}</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-500">النقاط المعتمدة</div>
+                <div class="font-black text-pointsPurple">${u.points} نقطة</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-500">المستحق للدفع</div>
+                <div class="font-black text-walletGold">${Number(u.balance).toLocaleString()} ل.س</div>
+              </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl space-y-1">
+              <div class="text-[11px] font-bold text-amber-900">بيانات الدفع (شام كاش — ${u.sham_cash_holder || u.full_name}):</div>
+              <div class="flex items-center justify-between gap-2">
+                <code class="text-[11px] bg-white px-2 py-1 rounded border break-all flex-1">${u.sham_cash_account || 'لا يوجد عنوان'}</code>
+                <button onclick="copyShamLink('${u.sham_cash_account || ''}')" class="bg-walletGold text-white px-2.5 py-1 rounded-lg font-bold shrink-0">
+                  <i class="fa-regular fa-copy ml-1"></i> نسخ الرابط
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-1">
+              ${isSuper && Number(u.balance) > 0 ? `
+                <button onclick="directPayUser('${u.id}', '${u.full_name}', ${u.balance})" class="flex-1 bg-achieveGreen text-white py-1.5 px-3 rounded-xl font-bold">
+                  <i class="fa-solid fa-money-bill-transfer ml-1"></i> تأكيد تحويل ${Number(u.balance).toLocaleString()} ل.س
+                </button>
+              ` : ''}
+              ${u.role !== 'super_admin' ? `
+                <button onclick="toggleUserFreeze('${u.id}', '${u.status}')" class="px-3 py-1.5 rounded-xl bg-red-100 text-red-700 font-bold">
+                  ${u.status === 'active' ? 'تجميد الحساب' : 'تنشيط الحساب'}
+                </button>
+              ` : ''}
             </div>
           </div>
         `).join('');
       }
     }
 
+    function copyShamLink(text) {
+      if (!text) return alert('لا يوجد عنوان شام كاش مسجل لهذا الموظف');
+      navigator.clipboard.writeText(text);
+      alert('تم نسخ عنوان/رابط شام كاش بنجاح: ' + text);
+    }
+
+    async function directPayUser(userId, userName, amount) {
+      if (!confirm(`هل قمت بتحويل مبلغ ${Number(amount).toLocaleString()} ل.س إلى محفظة شام كاش الخاصة بالموظف (${userName}) وتريد تصفير رصيده المستحق وتسجيل الدفعة؟`)) return;
+      const { data: u } = await sb.from('profiles').select('balance, total_paid, sham_cash_account').eq('id', userId).single();
+      if (!u) return;
+      const ref = 'DIR-' + Date.now().toString().slice(-6);
+      await sb.from('payouts').insert({
+        ref, user_id: userId, user_name: userName,
+        sham_cash_account: u.sham_cash_account, amount: Number(amount), status: 'completed'
+      });
+      await sb.from('profiles').update({
+        balance: Math.max(0, Number(u.balance) - Number(amount)),
+        total_paid: Number(u.total_paid) + Number(amount)
+      }).eq('id', userId);
+      alert('تم تسجيل الدفعة المالية وتحديث رصيد الموظف بنجاح.');
+      await refreshAllData();
+    }
+
+    async function reviewCompletion(compId, userId, pts, earned, decision) {
+      await sb.from('completions').update({ status: decision }).eq('id', compId);
+      if (decision === 'approved') {
+        const { data: u } = await sb.from('profiles').select('points, balance, total_earned').eq('id', userId).single();
+        if (u) {
+          await sb.from('profiles').update({
+            points: Number(u.points) + Number(pts),
+            balance: Number(u.balance) + Number(earned),
+            total_earned: Number(u.total_earned) + Number(earned)
+          }).eq('id', userId);
+        }
+        alert('تم اعتماد المهمة وإضافة النقاط والأرباح إلى رصيد الموظف.');
+      } else {
+        alert('تم رفض المهمة لعدم استيفاء شروط الإعجاب والتعليق والمشاركة.');
+      }
+      await refreshAllData();
+    }
+
     function renderTasks() {
       const isAdmin = currentProfile?.role === 'admin' || currentProfile?.role === 'super_admin';
       const filtered = allTasks.filter(t => t.platform === currentPlatform);
       document.getElementById('tasks-container').innerHTML = filtered.map(t => {
-        const done = completedTaskIds.includes(t.id);
+        const compStatus = myCompletionsMap[t.id]; // undefined | 'pending' | 'approved' | 'rejected'
         const reward = t.points * pointRate;
         const timerState = openedTasksTimers[t.id];
 
@@ -430,16 +554,22 @@
               <div class="flex flex-wrap gap-1 mt-2">${(t.reqs || []).map(r => `<span class="bg-slate-100 px-2 py-0.5 rounded text-xs">✅ ${r}</span>`).join('')}</div>
             </div>
 
-            ${!done ? `
+            ${!compStatus || compStatus === 'rejected' ? `
               <div class="space-y-2 pt-2 border-t border-slate-100">
-                <input type="text" id="proof-acc-${t.id}" placeholder="اكتب اسم حسابك الذي نفذت به المهمة للمراجعة..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs" />
+                ${compStatus === 'rejected' ? '<div class="text-xs text-red-600 font-bold">تم رفض إثباتك السابق، يرجى التنفيذ الفعلي وإعادة الإرسال:</div>' : ''}
+                <input type="text" id="proof-acc-${t.id}" placeholder="اسم حسابك الذي نفذت به المهمة..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs" />
+                <input type="text" id="proof-note-${t.id}" placeholder="اكتب أول 3 كلمات من تعليقك كإثبات..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs" />
               </div>
             ` : ''}
 
             <div class="flex gap-2">
-              ${done ? `
+              ${compStatus === 'approved' ? `
                 <button disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-achieveGreen">
-                  <i class="fa-solid fa-circle-check ml-1"></i> تم الإنجاز بنجاح
+                  <i class="fa-solid fa-circle-check ml-1"></i> معتمدة ومضافة لرصيدك
+                </button>
+              ` : (compStatus === 'pending' ? `
+                <button disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs text-amber-900 bg-amber-100 border border-amber-300">
+                  <i class="fa-solid fa-clock ml-1"></i> قيد مراجعة الإدارة لاعتماد النقاط
                 </button>
               ` : (!timerState ? `
                 <button onclick="startTaskVisit(${t.id}, '${t.url}')" class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-skyMain hover:bg-skyDark shadow-sm">
@@ -447,13 +577,13 @@
                 </button>
               ` : (timerState === 'counting' ? `
                 <button id="btn-timer-${t.id}" disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs text-amber-900 bg-amber-100 border border-amber-300">
-                  <i class="fa-solid fa-hourglass-half ml-1"></i> جاري التحقق من التنفيذ... انتظر 15 ثانية
+                  <i class="fa-solid fa-hourglass-half ml-1"></i> نفّذ المطلوب في الرابط... انتظر 15 ثانية
                 </button>
               ` : `
                 <button onclick="completeTask(${t.id}, ${t.points})" class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-achieveGreen hover:bg-emerald-700 shadow-sm">
-                  <i class="fa-solid fa-check-double ml-1"></i> تأكيد الإنجاز واستلام النقاط
+                  <i class="fa-solid fa-paper-plane ml-1"></i> إرسال الإثبات للمراجعة
                 </button>
-              `))}
+              `)))}
               ${isAdmin ? `<button onclick="archiveTask(${t.id})" class="px-3 py-2 rounded-xl bg-red-50 text-red-600 text-xs" title="حذف المهمة"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
           </div>
@@ -474,7 +604,7 @@
         secondsLeft--;
         const btn = document.getElementById(`btn-timer-${taskId}`);
         if (btn) {
-          btn.innerHTML = `<i class="fa-solid fa-hourglass-half ml-1"></i> نفّذ المطلوب في الرابط... متبقي ${secondsLeft} ثانية`;
+          btn.innerHTML = `<i class="fa-solid fa-hourglass-half ml-1"></i> نفّذ الإعجاب والتعليق والمشاركة... ${secondsLeft} ثانية`;
         }
         if (secondsLeft <= 0) {
           clearInterval(interval);
@@ -482,6 +612,34 @@
           renderTasks();
         }
       }, 1000);
+    }
+
+    async function completeTask(taskId, pts) {
+      if (openedTasksTimers[taskId] !== 'ready') {
+        return alert('يجب فتح الرابط أولاً والانتظار حتى انتهاء وقت التنفيذ!');
+      }
+
+      const accountUsed = document.getElementById(`proof-acc-${taskId}`)?.value.trim() || '';
+      const proofNote = document.getElementById(`proof-note-${taskId}`)?.value.trim() || '';
+      if (!accountUsed || !proofNote) {
+        return alert('يرجى كتابة اسم حسابك وأول 3 كلمات من تعليقك كإثبات قبل الإرسال!');
+      }
+
+      const earned = pts * pointRate;
+      const { error } = await sb.from('completions').upsert({
+        task_id: taskId,
+        user_id: currentProfile.id,
+        points: pts,
+        money_earned: earned,
+        account_used: accountUsed,
+        proof_note: proofNote,
+        status: 'pending'
+      }, { onConflict: 'task_id,user_id' });
+
+      if (error) return alert('خطأ أثناء إرسال الإثبات: ' + error.message);
+
+      alert('تم إرسال إثبات التنفيذ بنجاح! ستُضاف النقاط إلى محفظتك فور مراجعتها من الإدارة.');
+      await refreshAllData();
     }
 
     function toggleAuthMode(mode) {
@@ -536,37 +694,6 @@
       document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('border-2', 'border-blue-600', 'bg-blue-50', 'text-blue-700'));
       document.getElementById(`plat-${plat}`).classList.add('border-2', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
       renderTasks();
-    }
-
-    async function completeTask(taskId, pts) {
-      if (completedTaskIds.includes(taskId)) return;
-      if (openedTasksTimers[taskId] !== 'ready') {
-        return alert('يجب فتح الرابط أولاً والانتظار حتى انتهاء وقت التنفيذ!');
-      }
-
-      const proofInput = document.getElementById(`proof-acc-${taskId}`);
-      const accountUsed = proofInput ? proofInput.value.trim() : '';
-      if (!accountUsed) {
-        return alert('يرجى كتابة اسم حسابك الذي قمت بالإعجاب والتعليق والمشاركة منه قبل استلام النقاط!');
-      }
-
-      const earned = pts * pointRate;
-      const { error } = await sb.from('completions').insert({
-        task_id: taskId,
-        user_id: currentProfile.id,
-        points: pts,
-        money_earned: earned
-      });
-      if (error) return alert('تم إنجاز هذه المهمة مسبقاً');
-
-      await sb.from('profiles').update({
-        points: Number(currentProfile.points) + pts,
-        balance: Number(currentProfile.balance) + earned,
-        total_earned: Number(currentProfile.total_earned) + earned
-      }).eq('id', currentProfile.id);
-
-      alert(`تم توثيق التنفيذ بحساب (${accountUsed}) وإضافة ${earned.toLocaleString()} ل.س لمحفظتك!`);
-      await refreshAllData();
     }
 
     async function archiveTask(taskId) {
