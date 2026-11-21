@@ -300,6 +300,7 @@
     let allTasks = [];
     let completedTaskIds = [];
     let myAccountsCountByPlatform = { facebook: 0, instagram: 0, x: 0, youtube: 0 };
+    let openedTasksTimers = {};
 
     async function loadSystemSettings() {
       const { data } = await sb.from('system_settings').select('*').eq('id', 1).single();
@@ -416,6 +417,8 @@
       document.getElementById('tasks-container').innerHTML = filtered.map(t => {
         const done = completedTaskIds.includes(t.id);
         const reward = t.points * pointRate;
+        const timerState = openedTasksTimers[t.id];
+
         return `
           <div class="glass-card p-4 flex flex-col justify-between gap-3">
             <div>
@@ -423,18 +426,62 @@
                 <h3 class="font-bold text-sm">${t.title}</h3>
                 <span class="bg-purple-100 text-pointsPurple text-xs font-bold px-2.5 py-1 rounded-full shrink-0">${t.points} نقاط (${reward.toLocaleString()} ل.س)</span>
               </div>
-              <a href="${t.url}" target="_blank" class="text-xs text-skyDark underline break-all block mt-1">${t.url}</a>
+              <a href="${t.url}" target="_blank" onclick="startTaskVisit(${t.id}, '${t.url}', event)" class="text-xs text-skyDark underline break-all block mt-1">${t.url}</a>
               <div class="flex flex-wrap gap-1 mt-2">${(t.reqs || []).map(r => `<span class="bg-slate-100 px-2 py-0.5 rounded text-xs">✅ ${r}</span>`).join('')}</div>
             </div>
+
+            ${!done ? `
+              <div class="space-y-2 pt-2 border-t border-slate-100">
+                <input type="text" id="proof-acc-${t.id}" placeholder="اكتب اسم حسابك الذي نفذت به المهمة للمراجعة..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs" />
+              </div>
+            ` : ''}
+
             <div class="flex gap-2">
-              <button onclick="completeTask(${t.id}, ${t.points})" ${done ? 'disabled' : ''} class="flex-1 py-2 rounded-xl font-bold text-xs text-white ${done ? 'bg-achieveGreen' : 'bg-skyMain'}">
-                ${done ? 'تم الإنجاز' : 'تنفيذ المهمة واستلام النقاط'}
-              </button>
-              ${isAdmin ? `<button onclick="archiveTask(${t.id})" class="px-3 py-2 rounded-xl bg-red-50 text-red-600 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+              ${done ? `
+                <button disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-achieveGreen">
+                  <i class="fa-solid fa-circle-check ml-1"></i> تم الإنجاز بنجاح
+                </button>
+              ` : (!timerState ? `
+                <button onclick="startTaskVisit(${t.id}, '${t.url}')" class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-skyMain hover:bg-skyDark shadow-sm">
+                  <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i> فتح الرابط وتنفيذ المطلوب
+                </button>
+              ` : (timerState === 'counting' ? `
+                <button id="btn-timer-${t.id}" disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs text-amber-900 bg-amber-100 border border-amber-300">
+                  <i class="fa-solid fa-hourglass-half ml-1"></i> جاري التحقق من التنفيذ... انتظر 15 ثانية
+                </button>
+              ` : `
+                <button onclick="completeTask(${t.id}, ${t.points})" class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-achieveGreen hover:bg-emerald-700 shadow-sm">
+                  <i class="fa-solid fa-check-double ml-1"></i> تأكيد الإنجاز واستلام النقاط
+                </button>
+              `))}
+              ${isAdmin ? `<button onclick="archiveTask(${t.id})" class="px-3 py-2 rounded-xl bg-red-50 text-red-600 text-xs" title="حذف المهمة"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
           </div>
         `;
       }).join('') || '<p class="text-center text-slate-400 text-xs col-span-2 py-8">لا توجد مهام نشطة على هذه المنصة حالياً.</p>';
+    }
+
+    function startTaskVisit(taskId, url, e) {
+      if (e) e.preventDefault();
+      window.open(url, '_blank', 'noopener,noreferrer');
+
+      if (openedTasksTimers[taskId]) return;
+      openedTasksTimers[taskId] = 'counting';
+      renderTasks();
+
+      let secondsLeft = 15;
+      const interval = setInterval(() => {
+        secondsLeft--;
+        const btn = document.getElementById(`btn-timer-${taskId}`);
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-hourglass-half ml-1"></i> نفّذ المطلوب في الرابط... متبقي ${secondsLeft} ثانية`;
+        }
+        if (secondsLeft <= 0) {
+          clearInterval(interval);
+          openedTasksTimers[taskId] = 'ready';
+          renderTasks();
+        }
+      }, 1000);
     }
 
     function toggleAuthMode(mode) {
@@ -493,9 +540,22 @@
 
     async function completeTask(taskId, pts) {
       if (completedTaskIds.includes(taskId)) return;
+      if (openedTasksTimers[taskId] !== 'ready') {
+        return alert('يجب فتح الرابط أولاً والانتظار حتى انتهاء وقت التنفيذ!');
+      }
+
+      const proofInput = document.getElementById(`proof-acc-${taskId}`);
+      const accountUsed = proofInput ? proofInput.value.trim() : '';
+      if (!accountUsed) {
+        return alert('يرجى كتابة اسم حسابك الذي قمت بالإعجاب والتعليق والمشاركة منه قبل استلام النقاط!');
+      }
+
       const earned = pts * pointRate;
       const { error } = await sb.from('completions').insert({
-        task_id: taskId, user_id: currentProfile.id, points: pts, money_earned: earned
+        task_id: taskId,
+        user_id: currentProfile.id,
+        points: pts,
+        money_earned: earned
       });
       if (error) return alert('تم إنجاز هذه المهمة مسبقاً');
 
@@ -505,7 +565,7 @@
         total_earned: Number(currentProfile.total_earned) + earned
       }).eq('id', currentProfile.id);
 
-      alert(`تم إنجاز المهمة وإضافة ${earned.toLocaleString()} ل.س لمحفظتك!`);
+      alert(`تم توثيق التنفيذ بحساب (${accountUsed}) وإضافة ${earned.toLocaleString()} ل.س لمحفظتك!`);
       await refreshAllData();
     }
 
@@ -517,13 +577,15 @@
     async function createNewTask() {
       const title = document.getElementById('new-task-title').value.trim();
       const url = document.getElementById('new-task-url').value.trim();
-      if (!title || !url) return;
-      await sb.from('tasks').insert({
+      if (!title || !url) return alert('يرجى إدخال عنوان المهمة والرابط');
+      const { error } = await sb.from('tasks').insert({
         platform: document.getElementById('new-task-platform').value,
         title, url,
         reqs: document.getElementById('new-task-reqs').value.split(',').map(s => s.trim()),
-        points: Number(document.getElementById('new-task-points').value) || 3
+        points: Number(document.getElementById('new-task-points').value) || 3,
+        status: 'active'
       });
+      if (error) return alert('خطأ أثناء حفظ المهمة: ' + error.message);
       closeNewTaskModal();
       await refreshAllData();
     }
